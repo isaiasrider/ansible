@@ -1,0 +1,36 @@
+---
+- hosts: all
+  tasks:
+    - name: 'instala pacotes'
+      apt:
+        name: "{{ packages }}"
+        state: latest
+      become: yes
+      vars:
+        packages: 
+          - apache2
+          - mysql-server
+          - python
+          - libapache2-mod-php
+          - python-mysqldb
+          - php7.2-mysql
+          - php7.2-gd
+          - php7.2
+          - libapache2-mod-php7.2
+
+    # - debug: 
+    #     msg: "{{ ansible_host }}"
+
+    # - meta: end_play
+
+    - name: 'Cria o banco Mysql'
+      register: mysql_db_creation
+      mysql_db:
+        name: wordpress_db2
+        login_user: "root"
+        login_password: "_HiStOrY_V2_"
+        state: present
+        login_host: "{{ ansible_host }}"
+
+    - debug: 
+        msg: "{{ mysql_db_creation.changed }}"        

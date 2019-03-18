@@ -1,0 +1,10 @@
+---
+- hosts: all
+  tasks:
+           - name: 'instala tuto shesus'
+             apt:
+                     name: "{{ item }}"
+                     state: latest
+             become: yes
+             with_items:
+                     - apache2
