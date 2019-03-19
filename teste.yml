@@ -29,8 +29,19 @@
         name: wordpress_db2
         login_user: "root"
         login_password: "_HiStOrY_V2_"
-        state: present
+        state: absent
         login_host: "{{ ansible_host }}"
 
     - debug: 
-        msg: "{{ mysql_db_creation.changed }}"        
+        msg: "{{ mysql_db_creation.changed }}"
+
+    - name: 'cria um usuário'
+      register: mysql_user_creation
+      mysql_user:
+        name: wordpress_user
+        password: 12345
+        priv: 'wordpress_db.*:ALL'
+        state: present
+      become: yes      
+    - debug:
+      #  msg: "{{ mysql_user_creation.changed }}"
