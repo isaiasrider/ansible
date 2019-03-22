@@ -14,7 +14,7 @@
 
     - name: 'Cria o banco Mysql'
       mysql_db:
-        name: wordpress_db
+        name: "{{ wp_db_name }}"
         login_user: "root"
         login_password: "_HiStOrY_V2_"
         state: present
@@ -23,12 +23,12 @@
     - name: 'cria um usuário'
       register: mysql_user_creation
       mysql_user:
-        name: wordpress_user
-        password: 12345
-        priv: 'wordpress_db.*:ALL'
+        name: "{{ wp_username }}"
+        password: "{{ wp_user_password }}"
+        priv: "{{ wp_db_name }}.*:ALL"
         state: present
-        host: '10.1.1.192'
-      become: yes    
+        host: "{{ wp_host_ip }}"
+      become: yes
 
     - name: 'altera arquivos mysql' 
       replace:
@@ -89,17 +89,22 @@
         replace: '{{ item.value }}'
         backup: yes
       with_items:
-        - { regex: 'database_name_here', value: 'wordpress_db' }
-        - { regex : 'username_here', value: 'wordpress_user' }
-        - { regex : 'password_here', value: '12345' }
-        - { regex : 'localhost', value: '10.1.1.181' }
+        - { regex: 'database_name_here', value: "{{ wp_db_name }}" }
+        - { regex : 'username_here', value: "{{ wp_username }}" }
+        - { regex : 'password_here', value: "{{ wp_user_password }}" }
+        - { regex : 'localhost', value: "{{ db_host_ip }}" }
       become: yes
 
-    - name: 'copia configuração de apache pro remote host'
-      copy:
-        src: /etc/ansible/000-default.conf
+    - name: 'copy apache2 default.conf to remote host'
+      template:
+        src: 'template/000-default.conf.j2'
         dest: /etc/apache2/sites-available/000-default.conf
       become: yes
+#    - name: 'copia configuração de apache pro remote host'
+#      copy:
+#        src: /etc/ansible/000-default.conf
+#        dest: /etc/apache2/sites-available/000-default.conf
+#      become: yes
 
     - name: 'reiniciando apache2 truco'
       service:

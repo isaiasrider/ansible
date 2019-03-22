@@ -1,5 +1,0 @@
----
- - include: install_nginx.yml
- - include: packages_nginx.yml
- - include: user.yml
- - include: main.yml
