@@ -1,0 +1,23 @@
+    - name: 'instala pacotes'
+      apt:
+        name: "{{ packages }}"
+        state: latest
+      become: yes
+      vars:
+        packages: 
+          - apache2
+          - mysql-server
+          - python
+          - libapache2-mod-php
+          - python-mysqldb
+          - php7.2-mysql
+          - php7.2-gd
+          - php7.2
+          - libapache2-mod-php7.2
+
+    - name: 'copy apache2 default.conf to remote host'
+      template:
+        src: 'template/000-default.conf.j2'
+        dest: /etc/apache2/sites-available/000-default.conf
+      become: yes
+      notify: 'restart apache2'
